@@ -39,6 +39,10 @@ func (p *Proxy) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	r.URL.Host = p.publicUrl.Host
 	r.Host = p.publicUrl.Host
 
+	// call a goroutine to check for attacks (asynchronously)
+
+	// if we wanted to block the request, we could do it here
+
 	log.Printf("Request for %s from %s", r.RequestURI, r.RemoteAddr)
 
 	p.proxy.ServeHTTP(w, r)

@@ -6,11 +6,14 @@ import (
 )
 
 func TestLoadConfig_Success(t *testing.T) {
+	os.Setenv("FRONTMAN_DETECT_BRUTEFORCE_PATH", "/login")
 	os.Setenv("FRONTMAN_PROXY_ADDRESS", "127.0.0.1")
 	os.Setenv("FRONTMAN_PROXY_PORT", "8080")
 	os.Setenv("FRONTMAN_PRIVATE_URL", "http://private")
 	os.Setenv("FRONTMAN_PUBLIC_URL", "http://public")
+	os.Setenv("FRONTMAN_REDIS_HOST", "redis:6379")
 	defer func() {
+		os.Unsetenv("FRONTMAN_DETECT_BRUTEFORCE_PATH")
 		os.Unsetenv("FRONTMAN_PROXY_ADDRESS")
 		os.Unsetenv("FRONTMAN_PROXY_PORT")
 		os.Unsetenv("FRONTMAN_PRIVATE_URL")
@@ -32,6 +35,18 @@ func TestLoadConfig_Success(t *testing.T) {
 	}
 	if cfg.PublicURL != "http://public" {
 		t.Errorf("expected PublicURL 'http://public', got '%s'", cfg.PublicURL)
+	}
+	if cfg.DetectBruteForcePath != "/login" {
+		t.Errorf("expected DetectBruteForcePath '/login', got '%s'", cfg.DetectBruteForcePath)
+	}
+	if cfg.RedisHost != "redis:6379" {
+		t.Errorf("expected RedisHost 'redis:6379', got '%s'", cfg.RedisHost)
+	}
+	if cfg.RedisPassword != "" {
+		t.Errorf("expected RedisPassword '', got '%s'", cfg.RedisPassword)
+	}
+	if cfg.RedisDB != 0 {
+		t.Errorf("expected RedisDB 0, got %d", cfg.RedisDB)
 	}
 }
 
