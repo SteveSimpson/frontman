@@ -6,7 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/SteveSimpson/frontman/internal/config"
+	"github.com/SteveSimpson/frontman/config"
 )
 
 type Proxy struct {

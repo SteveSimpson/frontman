@@ -11,6 +11,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /app/frontman ./cmd/main.go
 # Runtime Stage
 FROM alpine:latest AS api
 WORKDIR /app
-COPY frontman_config.json .
 COPY --from=builder /app/frontman .
 ENTRYPOINT ["./frontman"]

@@ -9,3 +9,8 @@ services:
     env_file: "./dev.env"
     ports:
       - "8888:8888"
+  builder:
+    build:
+      dockerfile: ./Dockerfile
+      target: builder
+    env_file: "./dev.env"
