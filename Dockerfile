@@ -6,7 +6,9 @@ RUN go mod download
 FROM gobase AS builder
 WORKDIR /app
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/frontman ./cmd/main.go
+# Since we are just doing simple tests, run them here
+# In a real world scenario, you might want to separate this out
+RUN bin/test && CGO_ENABLED=0 GOOS=linux go build -o /app/frontman ./cmd/main.go
 
 # Runtime Stage
 FROM alpine:latest AS api
