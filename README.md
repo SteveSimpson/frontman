@@ -1,4 +1,4 @@
-# frontman# Go Web Proxy
+# Frontman Go Web Detecting Proxy
 
 ## Overview
 This project implements an efficient web proxy server in Go. The proxy server is designed to handle incoming HTTP requests, forward them to the appropriate target server, and return the responses back to the clients, detecting possible attacks.
