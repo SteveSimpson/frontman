@@ -1,22 +1,7 @@
 # frontman# Go Web Proxy
 
 ## Overview
-This project implements an efficient web proxy server in Go. The proxy server is designed to handle incoming HTTP requests, forward them to the appropriate target servers, and return the responses back to the clients.
-
-## Project Structure
-```
-go-web-proxy
-├── cmd
-│   └── main.go          # Entry point of the application
-├── internal
-│   ├── proxy
-│   │   └── proxy.go     # Implementation of the web proxy
-│   └── config
-│       └── config.go    # Configuration settings for the proxy
-├── go.mod                # Module dependencies
-├── go.sum                # Checksums for module dependencies
-└── README.md             # Project documentation
-```
+This project implements an efficient web proxy server in Go. The proxy server is designed to handle incoming HTTP requests, forward them to the appropriate target server, and return the responses back to the clients, detecting possible attacks.
 
 ## Setup Instructions
 1. Clone the repository:
@@ -39,9 +24,10 @@ go run cmd/main.go
 ```
 
 ## Features
-- Handles incoming HTTP requests and forwards them to target servers.
-- Supports configuration through a dedicated config file or environment variables.
+- Handles incoming HTTP requests and forwards them to target server.
+- Supports configuration through environment variables.
 - Efficient request handling and response forwarding.
+- Detects some possible web based attacks.
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
