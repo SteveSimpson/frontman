@@ -7,14 +7,18 @@ import (
 )
 
 type ProxyConfig struct {
-	DetectBruteForcePath string `json:"detect_brute_force_path"`
-	ProxyAddress         string `json:"proxy_address"`
-	ProxyPort            string `json:"proxy_port"`
-	PrivateURL           string `json:"private_url"`
-	PublicURL            string `json:"public_url"`
-	RedisHost            string `json:"redis_host"`
-	RedisPassword        string `json:"redis_password"`
-	RedisDB              int    `json:"redis_db"`
+	DetectBruteForcePath           string `json:"detect_brute_force_path"`
+	DetectBruteForceUsernameField  string `json:"detect_brute_force_username_field"`
+	DetectBruteForcePasswordField  string `json:"detect_brute_force_password_field"`
+	DetectBruteForceAlarmThreshold int    `json:"detect_brute_force_alarm_threshold"`
+	DetectBruteForceExpireSeconds  int    `json:"detect_brute_force_expire_seconds"`
+	ProxyAddress                   string `json:"proxy_address"`
+	ProxyPort                      string `json:"proxy_port"`
+	PrivateURL                     string `json:"private_url"`
+	PublicURL                      string `json:"public_url"`
+	RedisHost                      string `json:"redis_host"`
+	RedisPassword                  string `json:"redis_password"`
+	RedisDB                        int    `json:"redis_db"`
 }
 
 func LoadConfig() (*ProxyConfig, error) {
@@ -41,6 +45,35 @@ func LoadConfig() (*ProxyConfig, error) {
 
 	bruteForcePath := os.Getenv("FRONTMAN_DETECT_BRUTEFORCE_PATH")
 
+	bruteForceUsernameField, found := os.LookupEnv("FRONTMAN_DETECT_BRUTEFORCE_USERNAME_FIELD")
+	if !found {
+		bruteForceUsernameField = "username"
+	}
+	bruteForcePasswordField, found := os.LookupEnv("FRONTMAN_DETECT_BRUTEFORCE_PASSWORD_FIELD")
+	if !found {
+		bruteForcePasswordField = "password"
+	}
+
+	bruteForceAlarmThresholdStr, found := os.LookupEnv("FRONTMAN_DETECT_BRUTEFORCE_ALARM_THRESHOLD")
+	if !found {
+		bruteForceAlarmThresholdStr = "10"
+	}
+
+	bruteForceAlarmThreshold, err := strconv.Atoi(bruteForceAlarmThresholdStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_BRUTEFORCE_ALARM_THRESHOLD must be an integer")
+	}
+
+	bruteForceExpireSecondsStr, found := os.LookupEnv("FRONTMAN_DETECT_BRUTEFORCE_EXPIRE_SECONDS")
+	if !found {
+		bruteForceExpireSecondsStr = "3600" // default to 60 minutes
+	}
+
+	bruteForceExpireSeconds, err := strconv.Atoi(bruteForceExpireSecondsStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_BRUTEFORCE_EXPIRE_SECONDS must be an integer")
+	}
+
 	redisHost, found := os.LookupEnv("FRONTMAN_REDIS_HOST")
 	if !found {
 		return nil, errors.New("FRONTMAN_REDIS_HOST not set in environment")
@@ -63,13 +96,17 @@ func LoadConfig() (*ProxyConfig, error) {
 	}
 
 	return &ProxyConfig{
-		DetectBruteForcePath: bruteForcePath,
-		ProxyAddress:         proxyAddress,
-		ProxyPort:            proxyPort,
-		PrivateURL:           privateURL,
-		PublicURL:            publicURL,
-		RedisHost:            redisHost,
-		RedisPassword:        redisPassword,
-		RedisDB:              redisDB,
+		DetectBruteForcePath:           bruteForcePath,
+		DetectBruteForceUsernameField:  bruteForceUsernameField,
+		DetectBruteForcePasswordField:  bruteForcePasswordField,
+		DetectBruteForceAlarmThreshold: bruteForceAlarmThreshold,
+		DetectBruteForceExpireSeconds:  bruteForceExpireSeconds,
+		ProxyAddress:                   proxyAddress,
+		ProxyPort:                      proxyPort,
+		PrivateURL:                     privateURL,
+		PublicURL:                      publicURL,
+		RedisHost:                      redisHost,
+		RedisPassword:                  redisPassword,
+		RedisDB:                        redisDB,
 	}, nil
 }

@@ -39,6 +39,18 @@ func TestLoadConfig_Success(t *testing.T) {
 	if cfg.DetectBruteForcePath != "/login" {
 		t.Errorf("expected DetectBruteForcePath '/login', got '%s'", cfg.DetectBruteForcePath)
 	}
+	if cfg.DetectBruteForceUsernameField != "username" {
+		t.Errorf("expected DetectBruteForceUsernameField 'username', got '%s'", cfg.DetectBruteForceUsernameField)
+	}
+	if cfg.DetectBruteForcePasswordField != "password" {
+		t.Errorf("expected DetectBruteForcePasswordField 'password', got '%s'", cfg.DetectBruteForcePasswordField)
+	}
+	if cfg.DetectBruteForceAlarmThreshold != 10 {
+		t.Errorf("expected DetectBruteForceAlarmThreshold 10, got %d", cfg.DetectBruteForceAlarmThreshold)
+	}
+	if cfg.DetectBruteForceExpireSeconds != 3600 {
+		t.Errorf("expected DetectBruteForceExpireSeconds 3600, got %d", cfg.DetectBruteForceExpireSeconds)
+	}
 	if cfg.RedisHost != "redis:6379" {
 		t.Errorf("expected RedisHost 'redis:6379', got '%s'", cfg.RedisHost)
 	}

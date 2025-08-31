@@ -31,7 +31,7 @@ func main() {
 	}
 	log.Println("Redis connection successful: ", pong)
 
-	p, err := proxy.NewProxy(cfg)
+	p, err := proxy.NewProxy(cfg, client)
 	if err != nil {
 		log.Fatalf("Failed to create proxy: %v", err)
 	}
