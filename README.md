@@ -18,7 +18,7 @@ Datadog, ELK or Prometheus/Grafana.
 I have introduced the concept of scoring with the idea that more likely threats have a higher score.
 However, this concept will need a lot of adjustment to be meaningful. For now, it is more of a placeholder.
 
-### Brute Force
+### (Password) Brute Force
 
 Brute forcing logins can be done in many ways:
 
@@ -33,6 +33,54 @@ but since we are really talking about high volume requests and keeping this as g
 probably more effecienmct to ignore the response and only track the attempts.
 
 The cache entries should be time limited so that it cleans itself out.
+
+### Hostile Sources
+
+Admittedly, this is not the best implementation. I have not added a script to add the source IPs, yet. 
+
+### SQL Injection
+
+This should find serveral attempted SQL injection attacks, but I think the scoring will need a lot of tuning.
+
+I'm also not sure that this is the best implememntation.
+
+## Detectors Future Work
+
+### XSS detector
+
+A simple version could be implemented using `sql_injection.go` as the base and look for things like:
+
+```
+<script>, <img src=… onerror=…>, <svg onload=…>
+onmouseover=, onclick=
+%3Cscript%3Ealert(1)%3C/script%3E
+```
+
+### OS / Path Interaction
+
+A simple version could be implemented using `sql_injection.go` as the base and look for things like:
+
+```
+- ;, &&, ||, | (chaining operators)
+- $(command) or backticks `command`
+- cat /etc/passwd
+- whoami
+- ls
+- ping
+- curl
+- wget
+- ../
+- ..%2F
+- ..\\
+- /etc/passwd
+- boot.ini
+- id_rsa
+- page=../../etc/passwd
+- page=http://evil.com/shell.txt
+```
+
+Not sure how many false positives you would get, so a better stragegy might be to acutally parse the input, 
+but that would have the trade off of getting into heavier processing/
 
 ## Setup Instructions
 1. Clone the repository:

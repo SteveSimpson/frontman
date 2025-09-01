@@ -38,6 +38,8 @@ func setupRunnerTestEnv(t *testing.T) (cleanup func()) {
 	}
 }
 
+// Only do a simple test to ensure no panic or errors
+// Each detector is tested on its own
 func TestRequestDetectors_NoDetections(t *testing.T) {
 	cleanup := setupRunnerTestEnv(t)
 	defer cleanup()

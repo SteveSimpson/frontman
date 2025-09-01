@@ -54,6 +54,18 @@ func TestLoadConfig_Success(t *testing.T) {
 	if cfg.DetectBruteForceExpireSeconds != 3600 {
 		t.Errorf("expected DetectBruteForceExpireSeconds 3600, got %d", cfg.DetectBruteForceExpireSeconds)
 	}
+	if cfg.DetectBruteForceSalt != "random_salt_value" {
+		t.Error("expected DetectBruteForceSalt to be set, got empty string")
+	}
+	if cfg.DetectResponseStatusExpireSeconds != 300 {
+		t.Errorf("expected DetectResponseStatusExpireSeconds 300, got %d", cfg.DetectResponseStatusExpireSeconds)
+	}
+	if cfg.DetectResponseStatusIPThreshold != 50 {
+		t.Errorf("expected DetectResponseStatusIPThreshold 50, got %d", cfg.DetectResponseStatusIPThreshold)
+	}
+	if cfg.DetectResponseStatusStatusThreshold != 10 {
+		t.Errorf("expected DetectResponseStatusStatusThreshold 10, got %d", cfg.DetectResponseStatusStatusThreshold)
+	}
 	if cfg.RedisHost != "redis:6379" {
 		t.Errorf("expected RedisHost 'redis:6379', got '%s'", cfg.RedisHost)
 	}
@@ -62,9 +74,6 @@ func TestLoadConfig_Success(t *testing.T) {
 	}
 	if cfg.RedisDB != 0 {
 		t.Errorf("expected RedisDB 0, got %d", cfg.RedisDB)
-	}
-	if cfg.DetectBruteForceSalt != "random_salt_value" {
-		t.Error("expected DetectBruteForceSalt to be set, got empty string")
 	}
 	if cfg.DetectSQLInjectionAlertThreshold != 7 {
 		t.Errorf("expected DetectSQLInjectionAlertThreshold 5, got %d", cfg.DetectSQLInjectionAlertThreshold)

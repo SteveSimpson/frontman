@@ -63,7 +63,7 @@ func TestHostileSourceDetector_Detect_NotHostile(t *testing.T) {
 	defer cleanup()
 
 	detector := &HostileSourceDetector{}
-	ip := "5.6.7.8:12345"
+	ip := "5.6.7.8"
 
 	req, _ := http.NewRequest("GET", "/", nil)
 	req.RemoteAddr = ip

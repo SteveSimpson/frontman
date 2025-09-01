@@ -1,7 +1,6 @@
 package detect
 
 import (
-	"context"
 	"crypto/sha256"
 	"fmt"
 	"log"
@@ -15,8 +14,6 @@ import (
 type BruteForceDetector struct {
 	Details DetectDetails
 }
-
-var ctx = context.Background()
 
 // Detect looks for brute force login attempts based on IP, username, and password.
 func (b *BruteForceDetector) Detect(req *http.Request) (int, error) {

@@ -7,20 +7,23 @@ import (
 )
 
 type ProxyConfig struct {
-	DetectBruteForcePath             string `json:"detect_brute_force_path"`
-	DetectBruteForceUsernameField    string `json:"detect_brute_force_username_field"`
-	DetectBruteForcePasswordField    string `json:"detect_brute_force_password_field"`
-	DetectBruteForceAlarmThreshold   int    `json:"detect_brute_force_alarm_threshold"`
-	DetectBruteForceExpireSeconds    int    `json:"detect_brute_force_expire_seconds"`
-	DetectBruteForceSalt             string `json:"detect_brute_force_salt"`
-	DetectSQLInjectionAlertThreshold int    `json:"detect_sql_injection_alert_threshold"`
-	ProxyAddress                     string `json:"proxy_address"`
-	ProxyPort                        string `json:"proxy_port"`
-	PrivateURL                       string `json:"private_url"`
-	PublicURL                        string `json:"public_url"`
-	RedisHost                        string `json:"redis_host"`
-	RedisPassword                    string `json:"redis_password"`
-	RedisDB                          int    `json:"redis_db"`
+	DetectBruteForcePath                string `json:"detect_brute_force_path"`
+	DetectBruteForceUsernameField       string `json:"detect_brute_force_username_field"`
+	DetectBruteForcePasswordField       string `json:"detect_brute_force_password_field"`
+	DetectBruteForceAlarmThreshold      int    `json:"detect_brute_force_alarm_threshold"`
+	DetectBruteForceExpireSeconds       int    `json:"detect_brute_force_expire_seconds"`
+	DetectBruteForceSalt                string `json:"detect_brute_force_salt"`
+	DetectResponseStatusExpireSeconds   int    `json:"detect_response_status_expire_seconds"`
+	DetectResponseStatusIPThreshold     int    `json:"detect_response_status_ip_threshold"`
+	DetectResponseStatusStatusThreshold int    `json:"detect_response_status_status_threshold"`
+	DetectSQLInjectionAlertThreshold    int    `json:"detect_sql_injection_alert_threshold"`
+	ProxyAddress                        string `json:"proxy_address"`
+	ProxyPort                           string `json:"proxy_port"`
+	PrivateURL                          string `json:"private_url"`
+	PublicURL                           string `json:"public_url"`
+	RedisHost                           string `json:"redis_host"`
+	RedisPassword                       string `json:"redis_password"`
+	RedisDB                             int    `json:"redis_db"`
 }
 
 func LoadConfig() (*ProxyConfig, error) {
@@ -102,6 +105,33 @@ func LoadConfig() (*ProxyConfig, error) {
 		}
 	}
 
+	responseStatusExpireSecondsStr, found := os.LookupEnv("FRONTMAN_DETECT_RESPONSE_STATUS_EXPIRE_SECONDS")
+	if !found {
+		responseStatusExpireSecondsStr = "300" // default to 5 minutes
+	}
+	responseStatusExpireSeconds, err := strconv.Atoi(responseStatusExpireSecondsStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_RESPONSE_STATUS_EXPIRE_SECONDS must be an integer")
+	}
+
+	responseStatusIPThresholdStr, found := os.LookupEnv("FRONTMAN_DETECT_RESPONSE_STATUS_IP_THRESHOLD")
+	if !found {
+		responseStatusIPThresholdStr = "50" // default to 50 errors (for all errors for an IP)
+	}
+	responseStatusIPThreshold, err := strconv.Atoi(responseStatusIPThresholdStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_RESPONSE_STATUS_IP_THRESHOLD must be an integer")
+	}
+
+	responseStatusStatusThresholdStr, found := os.LookupEnv("FRONTMAN_DETECT_RESPONSE_STATUS_STATUS_THRESHOLD")
+	if !found {
+		responseStatusStatusThresholdStr = "10" // default to 10 errors per status code per IP
+	}
+	responseStatusStatusThreshold, err := strconv.Atoi(responseStatusStatusThresholdStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_RESPONSE_STATUS_STATUS_THRESHOLD must be an integer")
+	}
+
 	sqlInjectionAlertThresholdStr, found := os.LookupEnv("FRONTMAN_DETECT_SQLINJECTION_ALERT_THRESHOLD")
 	if !found {
 		sqlInjectionAlertThresholdStr = "7" // require a score of 7 to alert by default
@@ -112,19 +142,22 @@ func LoadConfig() (*ProxyConfig, error) {
 	}
 
 	return &ProxyConfig{
-		DetectBruteForcePath:             bruteForcePath,
-		DetectBruteForceUsernameField:    bruteForceUsernameField,
-		DetectBruteForcePasswordField:    bruteForcePasswordField,
-		DetectBruteForceAlarmThreshold:   bruteForceAlarmThreshold,
-		DetectBruteForceExpireSeconds:    bruteForceExpireSeconds,
-		DetectBruteForceSalt:             bruteForceSalt,
-		DetectSQLInjectionAlertThreshold: sqlInjectionAlertThreshold,
-		ProxyAddress:                     proxyAddress,
-		ProxyPort:                        proxyPort,
-		PrivateURL:                       privateURL,
-		PublicURL:                        publicURL,
-		RedisHost:                        redisHost,
-		RedisPassword:                    redisPassword,
-		RedisDB:                          redisDB,
+		DetectBruteForcePath:                bruteForcePath,
+		DetectBruteForceUsernameField:       bruteForceUsernameField,
+		DetectBruteForcePasswordField:       bruteForcePasswordField,
+		DetectBruteForceAlarmThreshold:      bruteForceAlarmThreshold,
+		DetectBruteForceExpireSeconds:       bruteForceExpireSeconds,
+		DetectBruteForceSalt:                bruteForceSalt,
+		DetectResponseStatusExpireSeconds:   responseStatusExpireSeconds,
+		DetectResponseStatusIPThreshold:     responseStatusIPThreshold,
+		DetectResponseStatusStatusThreshold: responseStatusStatusThreshold,
+		DetectSQLInjectionAlertThreshold:    sqlInjectionAlertThreshold,
+		ProxyAddress:                        proxyAddress,
+		ProxyPort:                           proxyPort,
+		PrivateURL:                          privateURL,
+		PublicURL:                           publicURL,
+		RedisHost:                           redisHost,
+		RedisPassword:                       redisPassword,
+		RedisDB:                             redisDB,
 	}, nil
 }
