@@ -49,7 +49,7 @@ func (p *Proxy) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	r.URL.Host = p.publicUrl.Host
 	r.Host = p.publicUrl.Host
 
-	clone := r.Clone(r.Context())
+	requestClone := r.Clone(r.Context())
 
 	// read the body (this will consume it)
 	bodyBytes, err := io.ReadAll(r.Body)
@@ -59,14 +59,14 @@ func (p *Proxy) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	// restore the io.ReadCloser to its original state
 	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-	clone.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	requestClone.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	// if we wanted to block the request, we could do it here
 
-	log.Printf("Request for %s from %s", r.RequestURI, r.RemoteAddr)
-
-	p.proxy.ServeHTTP(w, r)
+	log.Printf("REQUEST for %s from %s", r.RequestURI, r.RemoteAddr)
 
 	// call a goroutine to check for attacks (asynchronously)
-	go detect.RunDetectors(clone)
+	go detect.RequestDetectors(requestClone)
+
+	p.proxy.ServeHTTP(w, r)
 }

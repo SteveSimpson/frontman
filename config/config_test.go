@@ -12,12 +12,15 @@ func TestLoadConfig_Success(t *testing.T) {
 	os.Setenv("FRONTMAN_PRIVATE_URL", "http://private")
 	os.Setenv("FRONTMAN_PUBLIC_URL", "http://public")
 	os.Setenv("FRONTMAN_REDIS_HOST", "redis:6379")
+	os.Setenv("FRONTMAN_DETECT_BRUTEFORCE_SALT", "random_salt_value")
 	defer func() {
 		os.Unsetenv("FRONTMAN_DETECT_BRUTEFORCE_PATH")
 		os.Unsetenv("FRONTMAN_PROXY_ADDRESS")
 		os.Unsetenv("FRONTMAN_PROXY_PORT")
 		os.Unsetenv("FRONTMAN_PRIVATE_URL")
 		os.Unsetenv("FRONTMAN_PUBLIC_URL")
+		os.Unsetenv("FRONTMAN_REDIS_HOST")
+		os.Unsetenv("FRONTMAN_DETECT_BRUTEFORCE_SALT")
 	}()
 
 	cfg, err := LoadConfig()
@@ -59,6 +62,12 @@ func TestLoadConfig_Success(t *testing.T) {
 	}
 	if cfg.RedisDB != 0 {
 		t.Errorf("expected RedisDB 0, got %d", cfg.RedisDB)
+	}
+	if cfg.DetectBruteForceSalt != "random_salt_value" {
+		t.Error("expected DetectBruteForceSalt to be set, got empty string")
+	}
+	if cfg.DetectSQLInjectionAlertThreshold != 7 {
+		t.Errorf("expected DetectSQLInjectionAlertThreshold 5, got %d", cfg.DetectSQLInjectionAlertThreshold)
 	}
 }
 

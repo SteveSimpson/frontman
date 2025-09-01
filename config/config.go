@@ -7,18 +7,20 @@ import (
 )
 
 type ProxyConfig struct {
-	DetectBruteForcePath           string `json:"detect_brute_force_path"`
-	DetectBruteForceUsernameField  string `json:"detect_brute_force_username_field"`
-	DetectBruteForcePasswordField  string `json:"detect_brute_force_password_field"`
-	DetectBruteForceAlarmThreshold int    `json:"detect_brute_force_alarm_threshold"`
-	DetectBruteForceExpireSeconds  int    `json:"detect_brute_force_expire_seconds"`
-	ProxyAddress                   string `json:"proxy_address"`
-	ProxyPort                      string `json:"proxy_port"`
-	PrivateURL                     string `json:"private_url"`
-	PublicURL                      string `json:"public_url"`
-	RedisHost                      string `json:"redis_host"`
-	RedisPassword                  string `json:"redis_password"`
-	RedisDB                        int    `json:"redis_db"`
+	DetectBruteForcePath             string `json:"detect_brute_force_path"`
+	DetectBruteForceUsernameField    string `json:"detect_brute_force_username_field"`
+	DetectBruteForcePasswordField    string `json:"detect_brute_force_password_field"`
+	DetectBruteForceAlarmThreshold   int    `json:"detect_brute_force_alarm_threshold"`
+	DetectBruteForceExpireSeconds    int    `json:"detect_brute_force_expire_seconds"`
+	DetectBruteForceSalt             string `json:"detect_brute_force_salt"`
+	DetectSQLInjectionAlertThreshold int    `json:"detect_sql_injection_alert_threshold"`
+	ProxyAddress                     string `json:"proxy_address"`
+	ProxyPort                        string `json:"proxy_port"`
+	PrivateURL                       string `json:"private_url"`
+	PublicURL                        string `json:"public_url"`
+	RedisHost                        string `json:"redis_host"`
+	RedisPassword                    string `json:"redis_password"`
+	RedisDB                          int    `json:"redis_db"`
 }
 
 func LoadConfig() (*ProxyConfig, error) {
@@ -74,6 +76,11 @@ func LoadConfig() (*ProxyConfig, error) {
 		return nil, errors.New("FRONTMAN_DETECT_BRUTEFORCE_EXPIRE_SECONDS must be an integer")
 	}
 
+	bruteForceSalt, found := os.LookupEnv("FRONTMAN_DETECT_BRUTEFORCE_SALT")
+	if !found {
+		return nil, errors.New("FRONTMAN_DETECT_BRUTEFORCE_SALT not set in environment")
+	}
+
 	redisHost, found := os.LookupEnv("FRONTMAN_REDIS_HOST")
 	if !found {
 		return nil, errors.New("FRONTMAN_REDIS_HOST not set in environment")
@@ -95,18 +102,29 @@ func LoadConfig() (*ProxyConfig, error) {
 		}
 	}
 
+	sqlInjectionAlertThresholdStr, found := os.LookupEnv("FRONTMAN_DETECT_SQLINJECTION_ALERT_THRESHOLD")
+	if !found {
+		sqlInjectionAlertThresholdStr = "7" // require a score of 7 to alert by default
+	}
+	sqlInjectionAlertThreshold, err := strconv.Atoi(sqlInjectionAlertThresholdStr)
+	if err != nil {
+		return nil, errors.New("FRONTMAN_DETECT_SQLINJECTION_ALERT_THRESHOLD must be an integer")
+	}
+
 	return &ProxyConfig{
-		DetectBruteForcePath:           bruteForcePath,
-		DetectBruteForceUsernameField:  bruteForceUsernameField,
-		DetectBruteForcePasswordField:  bruteForcePasswordField,
-		DetectBruteForceAlarmThreshold: bruteForceAlarmThreshold,
-		DetectBruteForceExpireSeconds:  bruteForceExpireSeconds,
-		ProxyAddress:                   proxyAddress,
-		ProxyPort:                      proxyPort,
-		PrivateURL:                     privateURL,
-		PublicURL:                      publicURL,
-		RedisHost:                      redisHost,
-		RedisPassword:                  redisPassword,
-		RedisDB:                        redisDB,
+		DetectBruteForcePath:             bruteForcePath,
+		DetectBruteForceUsernameField:    bruteForceUsernameField,
+		DetectBruteForcePasswordField:    bruteForcePasswordField,
+		DetectBruteForceAlarmThreshold:   bruteForceAlarmThreshold,
+		DetectBruteForceExpireSeconds:    bruteForceExpireSeconds,
+		DetectBruteForceSalt:             bruteForceSalt,
+		DetectSQLInjectionAlertThreshold: sqlInjectionAlertThreshold,
+		ProxyAddress:                     proxyAddress,
+		ProxyPort:                        proxyPort,
+		PrivateURL:                       privateURL,
+		PublicURL:                        publicURL,
+		RedisHost:                        redisHost,
+		RedisPassword:                    redisPassword,
+		RedisDB:                          redisDB,
 	}, nil
 }
