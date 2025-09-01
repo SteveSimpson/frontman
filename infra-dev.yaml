@@ -12,8 +12,6 @@ services:
   wordpress:
     image: wordpress
     restart: always
-    # ports:
-    #   - 8081:80
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: exampleuser
@@ -49,6 +47,15 @@ services:
       PMA_PASSWORD: development
       PMA_HOST: db
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
 volumes:
   wordpress:
   mariadb_data:
+  redis_data:

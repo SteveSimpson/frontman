@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/SteveSimpson/frontman/config"
+	"github.com/redis/go-redis/v9"
 )
 
 func TestNewProxy(t *testing.T) {
@@ -12,7 +13,14 @@ func TestNewProxy(t *testing.T) {
 		PublicURL:  "http://example.com",
 		PrivateURL: "http://localhost:8080",
 	}
-	p, err := NewProxy(cfg)
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	p, err := NewProxy(cfg, client)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -32,7 +40,14 @@ func TestHandleRequest(t *testing.T) {
 		PublicURL:  "http://example.com",
 		PrivateURL: "http://localhost:8080",
 	}
-	p, err := NewProxy(cfg)
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	p, err := NewProxy(cfg, client)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}

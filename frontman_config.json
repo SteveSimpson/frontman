@@ -1,6 +1,0 @@
-{
-  "proxy_address": "0.0.0.0",
-  "proxy_port": 8888,
-  "private_url": "http://wordpress:80",
-  "public_url": "http://wp.local:8888"
-}
