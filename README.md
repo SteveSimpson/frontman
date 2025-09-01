@@ -99,7 +99,7 @@ but that would have the trade off of getting into heavier processing/
 ## Usage
 To run the web proxy server and dependencies, execute the following commands:
 ```
-docker compose build api
+docker compose build frontman
 docker compose up -d
 ```
 
