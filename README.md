@@ -116,6 +116,19 @@ To shut it down:
 docker compose down
 ```
 
+### Testing Proxy Response time
+
+```
+curl -w "@curl-format.txt" -o /dev/null -s http://127.0.0.1:8888/wp-login.php
+```
+
+VS
+
+```
+curl -w "@curl-format.txt" -o /dev/null -s http://127.0.0.1:8081/wp-login.php
+```
+
+
 ## Features
 - Handles incoming HTTP requests and forwards them to target server.
 - Supports configuration through environment variables.
