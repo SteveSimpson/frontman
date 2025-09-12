@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"github.com/SteveSimpson/frontman/config"
 	"github.com/SteveSimpson/frontman/detect"
@@ -63,8 +64,16 @@ func (rw *responseRecorder) Write(b []byte) (int, error) {
 }
 
 func (p *Proxy) HandleRequest(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
+	defer func() {
+		elapsed := time.Since(start)
+		log.Printf("Proxy overhead time: %v for %s", elapsed, r.RequestURI)
+	}()
+
 	r.URL.Scheme = p.publicUrl.Scheme
 	r.URL.Host = p.publicUrl.Host
+
 	r.Host = p.publicUrl.Host
 
 	requestClone := r.Clone(r.Context())
